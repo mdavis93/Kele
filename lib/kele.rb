@@ -5,7 +5,7 @@ require './lib/roadmap'
 class Kele
   include HTTParty
   include Roadmap
-  
+
   base_uri "https://www.bloc.io/api/v1"
 
   def initialize(email, password)
@@ -32,5 +32,29 @@ class Kele
     end
 
     canChoose
+  end
+
+  def get_messages(page = nil)
+    if page.nil?
+      response = self.class.get('/message_threads', headers: { authorization: @auth_token })
+    else
+      response = self.class.get('/message_threads', body: { page: page }, headers: { authorization: @auth_token })
+    end
+
+    JSON.parse(response.body)
+  end
+
+  def create_message(recipient_id, subject, msg, token = nil)
+    msg_data = "{
+    'sender': #{get_me['email']},
+    'recipient_id': #{recipient_id},
+    'token': #{token},
+    'subject': #{subject},
+    'stripped-text': #{msg}
+    }"
+
+    response = self.class.post('/messages', header: { authorization: @auth_token }, body: msg_data)
+
+    puts "Message Sent Successfully!" if response.success?
   end
 end
