@@ -1,4 +1,5 @@
 require 'httparty'
+require 'json'
 
 class Kele
   include HTTParty
@@ -9,5 +10,10 @@ class Kele
     @auth_token = post_response['auth_token']
 
     raise "Invalid Login Credentials" if @auth_token.nil?
+  end
+
+  def get_me
+    response = self.class.get("/users/me", headers: {authorization: @auth_token} )
+    JSON.parse(response.body)
   end
 end
