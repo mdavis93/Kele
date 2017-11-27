@@ -21,17 +21,17 @@ class Kele
   end
 
   def get_mentor_availability
-    canChoose = []
+    can_choose = []
     mentor_id = get_me['current_enrollment']['mentor_id']
     response = self.class.get("/mentors/#{mentor_id}/student_availability", headers: {authorization: @auth_token})
 
     JSON.parse(response.body).each do |avail|
       if avail['booked'].nil?
-        canChoose << avail
+        can_choose << avail
       end
     end
 
-    canChoose
+    can_choose
   end
 
   def get_messages(page = nil)
